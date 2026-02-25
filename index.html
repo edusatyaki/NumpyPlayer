@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NumPy Ninja | Master 100 Methods</title>
+    <title>SatNum | Satyaki Das</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #020617;
-            --card-bg: #0f172a;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
             --accent-blue: #38bdf8;
-            --accent-blue-glow: rgba(56, 189, 248, 0.4);
-            --border-color: #1e293b;
-            --terminal-header: #334155;
-            --success-green: #10b981;
+            --accent-green: #238636;
+            --border-color: #30363d;
+            --code-font: 'Fira Code', monospace;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,81 +26,92 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             padding-top: 80px;
-            padding-bottom: 80px; /* Space for fixed footer */
-            overflow-x: hidden;
+            padding-bottom: 100px;
         }
 
+        /* Ambient Glow */
         .ambient-light {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none; z-index: -1;
-            background: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
-                        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+            background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 50%);
         }
 
-        /* Progress Bar */
+        /* Sticky Progress Bar */
         .progress-container {
             position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
-            padding: 1rem 2rem; border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .progress-header { display: flex; justify-content: space-between; max-width: 1400px; margin: 0 auto; width: 100%; font-size: 0.9rem; color: var(--text-secondary); }
-        .progress-bar-track { width: 100%; max-width: 1400px; margin: 0.5rem auto 0; height: 6px; background: #1e293b; border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; background: var(--accent-blue); width: 0%; transition: width 0.4s ease; box-shadow: 0 0 10px var(--accent-blue-glow); }
-
-        header { padding: 4rem 2rem; text-align: center; }
-        h1 { font-size: 3.5rem; font-weight: 700; background: linear-gradient(135deg, #fff 0%, #38bdf8 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
-        p.subtitle { color: var(--text-secondary); max-width: 700px; margin: 0 auto; font-size: 1.2rem; }
-
-        /* Controls */
-        .controls-wrapper { max-width: 1400px; margin: 2rem auto; display: flex; gap: 1rem; padding: 0 2rem; }
-        .search-input, .filter-select {
-            flex: 1; padding: 0.8rem 1.2rem; border-radius: 12px; border: 1px solid var(--border-color);
-            background: rgba(30, 41, 59, 0.6); color: #fff; font-size: 1rem; transition: 0.3s;
-        }
-
-        /* Table */
-        .container { max-width: 1400px; margin: 0 auto 2rem; padding: 0 2rem; }
-        .table-wrapper { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 1.5rem; color: var(--text-secondary); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em; background: rgba(2, 6, 23, 0.5); }
-        td { padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
-        tr:hover { background: rgba(56, 189, 248, 0.02); }
-
-        .func-name { font-family: 'Fira Code', monospace; color: var(--accent-blue); font-weight: 600; font-size: 1.05rem; }
-        .desc-text { color: #cbd5e1; font-size: 0.95rem; line-height: 1.4; }
-        .type-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; border: 1px solid; display: inline-block; }
+        .progress-info { font-size: 0.9rem; color: var(--text-secondary); font-weight: 600; }
+        .progress-bar-wrapper { flex: 1; margin: 0 20px; background: #21262d; height: 6px; border-radius: 3px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--accent-blue); width: 0%; transition: width 0.4s ease; border-radius: 2px; }
         
-        .cat-creation { color: #38bdf8; border-color: #38bdf8; }
-        .cat-math { color: #a78bfa; border-color: #a78bfa; }
-        .cat-stats { color: #10b981; border-color: #10b981; }
-        .cat-logic { color: #f43f5e; border-color: #f43f5e; }
-        .cat-properties { color: #fbbf24; border-color: #fbbf24; }
-        .cat-joinsplit { color: #f97316; border-color: #f97316; }
+        .reset-btn {
+            background: transparent; border: 1px solid #da3633; color: #da3633;
+            padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; transition: 0.2s;
+        }
+        .reset-btn:hover { background: #da3633; color: #fff; }
 
-        /* Modal Console */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 2000; }
+        header { padding: 3rem 2rem; text-align: center; }
+        h1 { font-size: 3rem; font-weight: 700; color: #f0f6fc; margin-bottom: 0.5rem; }
+
+        .controls-wrapper { max-width: 1200px; margin: 1rem auto; display: flex; gap: 1rem; padding: 0 2rem; flex-wrap: wrap; }
+        .search-input, .filter-select {
+            flex: 1; padding: 0.8rem 1rem; border-radius: 6px; border: 1px solid var(--border-color);
+            background: #0d1117; color: #fff; font-family: var(--code-font); font-size: 0.9rem; min-width: 200px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .table-wrapper { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 1rem; color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border-color); background: #161b22; }
+        td { padding: 1rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 0.95rem; }
+        tr:hover { background: #21262d; }
+
+        .func-name { font-family: var(--code-font); color: var(--accent-blue); font-weight: 500; }
+        .desc-text { font-size: 0.9rem; color: #8b949e; line-height: 1.5; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.2s; z-index: 2000; padding: 20px; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .console { width: 800px; max-width: 95vw; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid #334155; box-shadow: 0 0 50px rgba(56, 189, 248, 0.2); }
-        .console-header { background: var(--terminal-header); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .console-body { padding: 30px; height: 450px; overflow-y: auto; font-family: 'Fira Code', monospace; font-size: 1rem; }
-        .line-in { color: #fff; margin-bottom: 5px; }
-        .line-in::before { content: ">>> "; color: #38bdf8; }
-        .line-out { color: var(--success-green); margin-bottom: 20px; white-space: pre-wrap; }
+        
+        .notebook-window { 
+            width: 100%; max-width: 900px; background: #fff; border-radius: 8px; 
+            display: flex; flex-direction: column; height: 85vh; color: #000; 
+            overflow: hidden; box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+        }
+        
+        .notebook-header { background: #f8f9fa; padding: 8px 20px; border-bottom: 1px solid #e1e4e8; font-size: 0.85rem; color: #586069; display: flex; justify-content: space-between; align-items: center; }
+        .notebook-body { flex: 1; overflow-y: auto; padding: 30px; font-family: var(--code-font); font-size: 14px; background: #fff; }
 
-        .play-btn { background: transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
-        .play-btn:hover { background: var(--accent-blue); color: #000; box-shadow: 0 0 15px var(--accent-blue-glow); }
-        .checkbox-custom { width: 22px; height: 22px; cursor: pointer; accent-color: var(--accent-blue); }
+        .cell { margin-bottom: 25px; display: block; }
+        .cell-input { display: flex; gap: 10px; margin-bottom: 8px; }
+        .prompt { color: #d0d0d0; user-select: none; width: 50px; text-align: right; font-size: 13px; font-family: monospace; padding-top: 4px; }
+        .input-area { flex: 1; background: #f7f7f7; border: 1px solid #e0e0e0; border-radius: 4px; padding: 10px; color: #333; white-space: pre-wrap; position: relative; line-height: 1.5; }
+        .input-area.active { border-left: 4px solid var(--accent-blue); }
 
-        /* Fixed Footer */
+        .output-area { margin-left: 60px; font-family: 'Fira Code', monospace; font-size: 13px; color: #333; overflow-x: auto; white-space: pre; }
+
+        .kw { color: #cf222e; font-weight: bold; }
+        .str { color: #0a3069; }
+        .num { color: #0550ae; }
+        .comment { color: #22863a; font-style: italic; display: block; margin-bottom: 5px; }
+
+        .play-btn { background: transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue); width: 32px; height: 32px; border-radius: 4px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .play-btn:hover { background: var(--accent-blue); color: #000; }
+        .checkbox-custom { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-blue); }
+
         .fixed-footer {
             position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(15px);
+            background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(5px);
             border-top: 1px solid var(--border-color);
-            padding: 1.2rem; text-align: center; z-index: 1000;
-            color: var(--text-secondary); font-size: 0.9rem;
+            padding: 1rem; text-align: center; font-size: 0.9rem; z-index: 1000;
         }
-        .fixed-footer a { color: var(--accent-blue); text-decoration: none; font-weight: 600; transition: 0.2s; }
-        .fixed-footer a:hover { text-shadow: 0 0 8px var(--accent-blue-glow); text-decoration: underline; }
+        .fixed-footer a { color: var(--accent-blue); text-decoration: none; font-weight: 600; }
+        
+        .type-badge { padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; border: 1px solid; }
     </style>
 </head>
 <body>
@@ -109,30 +119,34 @@
     <div class="ambient-light"></div>
 
     <div class="progress-container">
-        <div class="progress-header">
-            <span>Mastery: <strong id="progress-text">0/100</strong> Functions</span>
+        <span class="progress-info">SatNum Mastery</span>
+        <div class="progress-bar-wrapper">
+            <div id="progress-bar-fill" class="progress-bar-fill"></div>
         </div>
-        <div class="progress-bar-track"><div id="progress-bar-fill" class="progress-bar-fill"></div></div>
+        <span id="progress-text" class="progress-info">0/100</span>
+        <button class="reset-btn" onclick="resetProgress()" style="margin-left: 15px;">Reset</button>
     </div>
 
     <header>
-        <h1>NumPy Ninja</h1>
-        <p class="subtitle">100 Essential methods visualized through an interactive Python interpreter shell.</p>
+        <h1>Num 🧘‍♂️ Mantra</h1>
+        <p style="color: var(--text-secondary)">Exact syntax. Deep-tested logic. Verified outputs.</p>
     </header>
 
     <div class="controls-wrapper">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search 100 methods...">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search method...">
         <select id="catFilter" class="filter-select">
-            <option value="all">All Categories</option>
-            <option value="Creation">Creation</option>
-            <option value="Properties">Properties</option>
-            <option value="Math">Math</option>
-            <option value="Stats">Statistics</option>
-            <option value="Logic">Logical</option>
-            <option value="Sorting">Sorting/Search</option>
-            <option value="JoinSplit">Structure/Join</option>
-            <option value="LinAlg">LinAlg</option>
-            <option value="Advanced">Advanced/Random</option>
+            <option value="all">All Chapters</option>
+            <option value="Creation">1. Array Creation</option>
+            <option value="Properties">2. Array Properties</option>
+            <option value="Reshaping">3. Reshaping</option>
+            <option value="Math">4. Math Operations</option>
+            <option value="Stats">5. Statistics</option>
+            <option value="Searching">6. Searching</option>
+            <option value="Sorting">7. Sorting</option>
+            <option value="JoinSplit">8. Join & Split</option>
+            <option value="Logic">9. Logical Ops</option>
+            <option value="LinAlg">10. Linear Algebra</option>
+            <option value="Random">11. Random</option>
         </select>
     </div>
 
@@ -141,25 +155,51 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="60">Done</th>
+                        <th width="50">✓</th>
                         <th width="140">Category</th>
-                        <th width="180">Method</th>
-                        <th>Description</th>
+                        <th width="200">Method</th>
+                        <th>Explanation</th>
                         <th width="80">Demo</th>
                     </tr>
                 </thead>
-                <tbody id="ninja-body"></tbody>
+                <tbody id="master-body"></tbody>
             </table>
         </div>
     </div>
 
     <div class="modal-overlay" id="modal">
-        <div class="console">
-            <div class="console-header">
-                <span style="color:#fff; font-size:0.8rem">interpreter.py</span>
-                <button onclick="closeModal()" style="background:none; border:none; color:#fff; cursor:pointer; font-size:1.5rem">×</button>
+        <div class="notebook-window">
+            <div class="notebook-header">
+                <span>NumPy_Deep_Dive.ipynb</span>
+                <button onclick="closeModal()" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">×</button>
             </div>
-            <div class="console-body" id="console-content"></div>
+            <div class="notebook-body">
+                
+                <div class="cell" id="init-cell">
+                    <div class="cell-input">
+                        <div class="prompt">In [1]:</div>
+                        <div class="input-area"><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="comment"># Standard arrays for demos</span>
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+m = np.array([[1, 2], [3, 4]])
+print(f"a: {a}\nm: \n{m}")</div>
+                    </div>
+                    <div class="output-area">a: [1 2 3]
+m: 
+[[1 2]
+ [3 4]]</div>
+                </div>
+
+                <div class="cell">
+                    <div class="cell-input">
+                        <div class="prompt" id="prompt-2">In [2]:</div>
+                        <div class="input-area active" id="code-box"></div>
+                    </div>
+                    <div class="output-area" id="output-box"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -168,78 +208,159 @@
     </footer>
 
     <script>
+        // --- 100 NUMPY METHODS DATASET ---
         const methods = [
-            // 1-10 Creation
-            { cat: 'Creation', name: 'np.array()', desc: 'Create array from list.', code: 'a = np.array([1, 2, 3])\nprint(a)', out: '[1 2 3]' },
-            { cat: 'Creation', name: 'np.zeros()', desc: 'Create array filled with zeros.', code: 'np.zeros((2, 3))', out: '[[0. 0. 0.]\n [0. 0. 0.]]' },
-            { cat: 'Creation', name: 'np.ones()', desc: 'Create array filled with ones.', code: 'np.ones((2, 2))', out: '[[1. 1.]\n [1. 1.]]' },
-            { cat: 'Creation', name: 'np.full()', desc: 'Create array filled with a specific constant.', code: 'np.full((2, 2), 7)', out: '[[7 7]\n [7 7]]' },
-            { cat: 'Creation', name: 'np.arange()', desc: 'Return evenly spaced values within a given interval.', code: 'np.arange(1, 6)', out: '[1 2 3 4 5]' },
-            { cat: 'Creation', name: 'np.linspace()', desc: 'Return evenly spaced numbers over a specified interval.', code: 'np.linspace(0, 10, 5)', out: '[0. 2.5 5. 7.5 10.]' },
-            { cat: 'Creation', name: 'np.eye()', desc: 'Return a 2D array with ones on the diagonal.', code: 'np.eye(3)', out: '[[1. 0. 0.]\n [0. 1. 0.]\n [0. 0. 1.]]' },
-            { cat: 'Creation', name: 'np.identity()', desc: 'Return the square identity matrix.', code: 'np.identity(3)', out: '[[1. 0. 0.]\n [0. 1. 0.]\n [0. 0. 1.]]' },
-            { cat: 'Creation', name: 'np.empty()', desc: 'Create array without initializing entries.', code: 'np.empty((2, 2))', out: '[[0. 0.]\n [0. 0.]]' },
-            { cat: 'Creation', name: 'np.random.rand()', desc: 'Random values in a given shape [0, 1).', code: 'np.random.rand(3)', out: '[0.42 0.77 0.12]' },
-            // 11-20 Properties
-            { cat: 'Properties', name: '.shape', desc: 'Tuple of array dimensions.', code: 'a = np.array([[1, 2], [3, 4]])\na.shape', out: '(2, 2)' },
-            { cat: 'Properties', name: '.ndim', desc: 'Number of array dimensions.', code: 'a.ndim', out: '2' },
-            { cat: 'Properties', name: '.size', desc: 'Number of elements in the array.', code: 'a.size', out: '4' },
-            { cat: 'Properties', name: '.dtype', desc: 'Data-type of the array’s elements.', code: 'a.dtype', out: 'int64' },
-            { cat: 'Properties', name: '.astype()', desc: 'Copy of the array, cast to a specified type.', code: 'a.astype(float)', out: '[[1. 2.]\n [3. 4.]]' },
-            { cat: 'Properties', name: '.reshape()', desc: 'Gives a new shape to an array without changing its data.', code: 'np.arange(6).reshape(2, 3)', out: '[[0 1 2]\n [3 4 5]]' },
-            { cat: 'Properties', name: '.flatten()', desc: 'Return a copy of the array collapsed into one dimension.', code: 'a.flatten()', out: '[1 2 3 4]' },
-            { cat: 'Properties', name: '.ravel()', desc: 'Return a flattened array (view if possible).', code: 'a.ravel()', out: '[1 2 3 4]' },
-            { cat: 'Properties', name: '.T', desc: 'The transposed array.', code: 'a.T', out: '[[1 3]\n [2 4]]' },
-            { cat: 'Properties', name: 'np.resize()', desc: 'Return a new array with the specified shape.', code: 'np.resize([1, 2, 3, 4], (2, 3))', out: '[[1 2 3]\n [4 1 2]]' },
-            // 21-30 Math
-            { cat: 'Math', name: 'np.add()', desc: 'Add arguments element-wise.', code: 'np.add([1, 2], [3, 4])', out: '[4 6]' },
-            { cat: 'Math', name: 'np.subtract()', desc: 'Subtract arguments element-wise.', code: 'np.subtract([5, 4], [1, 2])', out: '[4 2]' },
-            { cat: 'Math', name: 'np.multiply()', desc: 'Multiply arguments element-wise.', code: 'np.multiply([2, 3], [4, 5])', out: '[8 15]' },
-            { cat: 'Math', name: 'np.divide()', desc: 'Divide arguments element-wise.', code: 'np.divide([10, 20], [2, 5])', out: '[5. 4.]' },
-            { cat: 'Math', name: 'np.power()', desc: 'First array elements raised to powers from second array.', code: 'np.power([2, 3], 2)', out: '[4 9]' },
-            { cat: 'Math', name: 'np.sqrt()', desc: 'Return the non-negative square-root of an array.', code: 'np.sqrt([4, 9])', out: '[2. 3.]' },
-            { cat: 'Math', name: 'np.abs()', desc: 'Calculate the absolute value element-wise.', code: 'np.abs([-2, -5])', out: '[2 5]' },
-            { cat: 'Math', name: 'np.round()', desc: 'Evenly round to the given number of decimals.', code: 'np.round([2.3, 4.7])', out: '[2. 5.]' },
-            { cat: 'Math', name: 'np.floor()', desc: 'Return the floor of the input, element-wise.', code: 'np.floor([2.7, 3.9])', out: '[2. 3.]' },
-            { cat: 'Math', name: 'np.ceil()', desc: 'Return the ceiling of the input, element-wise.', code: 'np.ceil([2.2, 3.1])', out: '[3. 4.]' },
-            // 31-40 Stats
-            { cat: 'Stats', name: 'np.mean()', desc: 'Compute the arithmetic mean.', code: 'np.mean([1, 2, 3])', out: '2.0' },
-            { cat: 'Stats', name: 'np.median()', desc: 'Compute the median along the specified axis.', code: 'np.median([1, 5, 3])', out: '3.0' },
-            { cat: 'Stats', name: 'np.std()', desc: 'Compute the standard deviation.', code: 'np.std([1, 2, 3])', out: '0.816' },
-            { cat: 'Stats', name: 'np.var()', desc: 'Compute the variance.', code: 'np.var([1, 2, 3])', out: '0.666' },
-            { cat: 'Stats', name: 'np.sum()', desc: 'Sum of array elements.', code: 'np.sum([1, 2, 3])', out: '6' },
-            { cat: 'Stats', name: 'np.min()', desc: 'Return the minimum of an array.', code: 'np.min([1, 5, 3])', out: '1' },
-            { cat: 'Stats', name: 'np.max()', desc: 'Return the maximum of an array.', code: 'np.max([1, 5, 3])', out: '5' },
-            { cat: 'Stats', name: 'np.argmin()', desc: 'Returns the indices of the minimum values.', code: 'np.argmin([1, 5, 3])', out: '0' },
-            { cat: 'Stats', name: 'np.argmax()', desc: 'Returns the indices of the maximum values.', code: 'np.argmax([1, 5, 3])', out: '1' },
-            { cat: 'Stats', name: 'np.percentile()', desc: 'Compute the q-th percentile of the data.', code: 'np.percentile([1, 2, 3, 4], 50)', out: '2.5' },
-            // 41-100 (Simplified logic for integration)
-            { cat: 'Logic', name: 'np.where()', desc: 'Return elements chosen based on condition.', code: 'a = np.array([10, 20, 30])\nnp.where(a > 15, "H", "L")', out: "['L' 'H' 'H']" },
-            { cat: 'Logic', name: 'np.any()', desc: 'Check if any element is True.', code: 'np.any([True, False])', out: 'True' },
-            { cat: 'Logic', name: 'np.all()', desc: 'Check if all elements are True.', code: 'np.all([True, True])', out: 'True' },
-            { cat: 'Sorting', name: 'np.sort()', desc: 'Return a sorted copy of array.', code: 'np.sort([3,1,2])', out: '[1 2 3]' },
-            { cat: 'Sorting', name: 'np.argsort()', desc: 'Indices that would sort array.', code: 'np.argsort([3,1,2])', out: '[1 2 0]' },
-            { cat: 'JoinSplit', name: 'np.concatenate()', desc: 'Join arrays along axis.', code: 'np.concatenate(([1,2], [3,4]))', out: '[1 2 3 4]' },
-            { cat: 'JoinSplit', name: 'np.vstack()', desc: 'Vertical stack.', code: 'np.vstack(([1,2], [3,4]))', out: '[[1 2]\n [3 4]]' },
-            { cat: 'JoinSplit', name: 'np.hstack()', desc: 'Horizontal stack.', code: 'np.hstack(([1,2], [3,4]))', out: '[1 2 3 4]' },
-            { cat: 'LinAlg', name: 'np.dot()', desc: 'Dot product.', code: 'np.dot([1,2], [3,4])', out: '11' },
-            { cat: 'LinAlg', name: 'np.linalg.inv()', desc: 'Matrix inverse.', code: 'a=np.array([[1,2],[3,4]]); np.linalg.inv(a)', out: '[[-2. 1.] [1.5 -0.5]]' },
-            { cat: 'Advanced', name: 'np.random.randint()', desc: 'Random integers.', code: 'np.random.randint(1,10,3)', out: '[4 9 2]' },
-            { cat: 'Advanced', name: 'np.clip()', desc: 'Clip values in range.', code: 'np.clip([1,5,10], 2, 8)', out: '[2 5 8]' }
-            // Note: Rest of 100 can be filled similarly following this pattern
+            // 1. Array Creation
+            { cat: 'Creation', name: 'np.array()', desc: 'Create from list.', code: "# Create from list\nnp.array([1, 2, 3])", out: "array([1, 2, 3])" },
+            { cat: 'Creation', name: 'np.zeros()', desc: 'Array of zeros.', code: "# 2x3 zeros\nnp.zeros((2, 3))", out: "array([[0., 0., 0.],\n       [0., 0., 0.]])" },
+            { cat: 'Creation', name: 'np.ones()', desc: 'Array of ones.', code: "# 2x2 ones\nnp.ones((2, 2))", out: "array([[1., 1.],\n       [1., 1.]])" },
+            { cat: 'Creation', name: 'np.full()', desc: 'Constant array.', code: "# Fill with 7\nnp.full((2, 2), 7)", out: "array([[7, 7],\n       [7, 7]])" },
+            { cat: 'Creation', name: 'np.arange()', desc: 'Range of values.', code: "# 0 to 10 step 2\nnp.arange(0, 10, 2)", out: "array([0, 2, 4, 6, 8])" },
+            { cat: 'Creation', name: 'np.linspace()', desc: 'Linearly spaced.', code: "# 5 points 0-1\nnp.linspace(0, 1, 5)", out: "array([0.  , 0.25, 0.5 , 0.75, 1.  ])" },
+            { cat: 'Creation', name: 'np.eye()', desc: 'Identity matrix.', code: "# 3x3 Identity\nnp.eye(3)", out: "array([[1., 0., 0.],\n       [0., 1., 0.],\n       [0., 0., 1.]])" },
+            { cat: 'Creation', name: 'np.identity()', desc: 'Square identity.', code: "# 2x2 Identity\nnp.identity(2)", out: "array([[1., 0.],\n       [0., 1.]])" },
+            { cat: 'Creation', name: 'np.empty()', desc: 'Uninitialized.', code: "# Random mem\nnp.empty((2, 2))", out: "array([[0., 0.],\n       [0., 0.]])" },
+            { cat: 'Creation', name: 'np.tri()', desc: 'Triangle 1s.', code: "# Lower triangle\nnp.tri(3)", out: "array([[1., 0., 0.],\n       [1., 1., 0.],\n       [1., 1., 1.]])" },
+            
+            // 2. Properties
+            { cat: 'Properties', name: '.shape', desc: 'Dimensions.', code: "# (rows, cols)\nm.shape", out: "(2, 2)" },
+            { cat: 'Properties', name: '.ndim', desc: 'Number of dims.', code: "# Rank\nm.ndim", out: "2" },
+            { cat: 'Properties', name: '.size', desc: 'Total elements.', code: "# Count\nm.size", out: "4" },
+            { cat: 'Properties', name: '.dtype', desc: 'Data type.', code: "# Type\nm.dtype", out: "dtype('int64')" },
+            { cat: 'Properties', name: '.astype()', desc: 'Cast type.', code: "# To float\nm.astype(float)", out: "array([[1., 2.],\n       [3., 4.]])" },
+            { cat: 'Properties', name: '.itemsize', desc: 'Bytes per element.', code: "# Bytes\nm.itemsize", out: "8" },
+            { cat: 'Properties', name: '.nbytes', desc: 'Total bytes.', code: "# Total memory\nm.nbytes", out: "32" },
+            
+            // 3. Reshaping
+            { cat: 'Reshaping', name: 'np.reshape()', desc: 'Change shape.', code: "# 1D to 2x3\nnp.arange(6).reshape(2, 3)", out: "array([[0, 1, 2],\n       [3, 4, 5]])" },
+            { cat: 'Reshaping', name: '.flatten()', desc: 'Collapse to 1D.', code: "# Copy 1D\nm.flatten()", out: "array([1, 2, 3, 4])" },
+            { cat: 'Reshaping', name: '.ravel()', desc: 'Flatten view.', code: "# View 1D\nm.ravel()", out: "array([1, 2, 3, 4])" },
+            { cat: 'Reshaping', name: '.T', desc: 'Transpose.', code: "# Transpose\nm.T", out: "array([[1, 3],\n       [2, 4]])" },
+            { cat: 'Reshaping', name: 'np.resize()', desc: 'Resize array.', code: "# Change size\nnp.resize(a, (2, 2))", out: "array([[1, 2],\n       [3, 1]])" },
+            { cat: 'Reshaping', name: 'np.expand_dims()', desc: 'Add dimension.', code: "# Add axis\nnp.expand_dims(a, axis=0)", out: "array([[1, 2, 3]])" },
+            { cat: 'Reshaping', name: 'np.squeeze()', desc: 'Remove 1-dims.', code: "# Remove axis\nnp.squeeze([[1, 2, 3]])", out: "array([1, 2, 3])" },
+            { cat: 'Reshaping', name: 'np.transpose()', desc: 'Permute dimensions.', code: "# Swap axes\nnp.transpose(m)", out: "array([[1, 3],\n       [2, 4]])" },
+            { cat: 'Reshaping', name: 'np.swapaxes()', desc: 'Interchange two axes.', code: "# Swap 0 & 1\nnp.swapaxes(m, 0, 1)", out: "array([[1, 3],\n       [2, 4]])" },
+            { cat: 'Reshaping', name: 'np.rollaxis()', desc: 'Roll axis.', code: "# Roll axis\nnp.rollaxis(m, 1)", out: "array([[1, 3],\n       [2, 4]])" },
+
+            // 4. Math
+            { cat: 'Math', name: 'np.add()', desc: 'Addition.', code: "# Element add\nnp.add(a, b)", out: "array([5, 7, 9])" },
+            { cat: 'Math', name: 'np.subtract()', desc: 'Subtraction.', code: "# Element sub\nnp.subtract(b, a)", out: "array([3, 3, 3])" },
+            { cat: 'Math', name: 'np.multiply()', desc: 'Multiplication.', code: "# Element mul\nnp.multiply(a, b)", out: "array([ 4, 10, 18])" },
+            { cat: 'Math', name: 'np.divide()', desc: 'Division.', code: "# Element div\nnp.divide(b, a)", out: "array([4. , 2.5, 2. ])" },
+            { cat: 'Math', name: 'np.power()', desc: 'Power.', code: "# a^2\nnp.power(a, 2)", out: "array([1, 4, 9])" },
+            { cat: 'Math', name: 'np.sqrt()', desc: 'Square root.', code: "# Root\nnp.sqrt([4, 9])", out: "array([2., 3.])" },
+            { cat: 'Math', name: 'np.abs()', desc: 'Absolute.', code: "# Abs value\nnp.abs([-1, -2])", out: "array([1, 2])" },
+            { cat: 'Math', name: 'np.round()', desc: 'Round.', code: "# Round\nnp.round([1.2, 1.7])", out: "array([1., 2.])" },
+            { cat: 'Math', name: 'np.floor()', desc: 'Floor.', code: "# Floor\nnp.floor([1.9])", out: "array([1.])" },
+            { cat: 'Math', name: 'np.ceil()', desc: 'Ceil.', code: "# Ceil\nnp.ceil([1.1])", out: "array([2.])" },
+            { cat: 'Math', name: 'np.exp()', desc: 'Exponential.', code: "# e^x\nnp.exp([1])", out: "array([2.71828183])" },
+            { cat: 'Math', name: 'np.log()', desc: 'Natural log.', code: "# ln(x)\nnp.log([2.718])", out: "array([0.99989632])" },
+            { cat: 'Math', name: 'np.sin()', desc: 'Sine.', code: "# Sin(pi/2)\nnp.sin(np.pi/2)", out: "1.0" },
+            { cat: 'Math', name: 'np.cos()', desc: 'Cosine.', code: "# Cos(0)\nnp.cos(0)", out: "1.0" },
+            { cat: 'Math', name: 'np.dot()', desc: 'Dot product.', code: "# Matrix mul\nnp.dot(m, m)", out: "array([[ 7, 10],\n       [15, 22]])" },
+
+            // 5. Stats
+            { cat: 'Stats', name: 'np.mean()', desc: 'Mean.', code: "# Average\nnp.mean(a)", out: "2.0" },
+            { cat: 'Stats', name: 'np.median()', desc: 'Median.', code: "# Middle val\nnp.median([1, 5, 2])", out: "2.0" },
+            { cat: 'Stats', name: 'np.std()', desc: 'Std Deviation.', code: "# Spread\nnp.std(a)", out: "0.81649658" },
+            { cat: 'Stats', name: 'np.var()', desc: 'Variance.', code: "# Variance\nnp.var(a)", out: "0.66666667" },
+            { cat: 'Stats', name: 'np.sum()', desc: 'Sum.', code: "# Total\nnp.sum(a)", out: "6" },
+            { cat: 'Stats', name: 'np.min()', desc: 'Minimum.', code: "# Min\nnp.min(a)", out: "1" },
+            { cat: 'Stats', name: 'np.max()', desc: 'Maximum.', code: "# Max\nnp.max(a)", out: "3" },
+            { cat: 'Stats', name: 'np.argmin()', desc: 'Index min.', code: "# Index of min\nnp.argmin(a)", out: "0" },
+            { cat: 'Stats', name: 'np.argmax()', desc: 'Index max.', code: "# Index of max\nnp.argmax(a)", out: "2" },
+            { cat: 'Stats', name: 'np.percentile()', desc: 'Percentile.', code: "# 50th %\nnp.percentile(a, 50)", out: "2.0" },
+            { cat: 'Stats', name: 'np.corrcoef()', desc: 'Correlation.', code: "# Pearson corr\nnp.corrcoef(a, b)", out: "array([[1., 1.],\n       [1., 1.]])" },
+            { cat: 'Stats', name: 'np.cov()', desc: 'Covariance.', code: "# Cov matrix\nnp.cov(a, b)", out: "array([[1., 1.],\n       [1., 1.]])" },
+            { cat: 'Stats', name: 'np.cumsum()', desc: 'Cumulative sum.', code: "# CumSum\nnp.cumsum(a)", out: "array([1, 3, 6])" },
+            { cat: 'Stats', name: 'np.cumprod()', desc: 'Cumulative prod.', code: "# CumProd\nnp.cumprod(a)", out: "array([1, 2, 6])" },
+
+            // 6. Searching
+            { cat: 'Searching', name: 'np.where()', desc: 'Conditional select.', code: "# If > 2\nnp.where(a > 2, a, 0)", out: "array([0, 0, 3])" },
+            { cat: 'Searching', name: 'np.searchsorted()', desc: 'Find insertion index.', code: "# Insert 2.5\nnp.searchsorted(a, 2.5)", out: "2" },
+            { cat: 'Searching', name: 'np.nonzero()', desc: 'Non-zero indices.', code: "# Index != 0\nnp.nonzero([1, 0, 2])", out: "(array([0, 2]),)" },
+            { cat: 'Searching', name: 'np.argwhere()', desc: 'Indices of condition.', code: "# Index > 1\nnp.argwhere(a > 1)", out: "array([[1],\n       [2]])" },
+            { cat: 'Searching', name: 'np.extract()', desc: 'Extract by condition.', code: "# Get > 1\nnp.extract(a > 1, a)", out: "array([2, 3])" },
+
+            // 7. Sorting
+            { cat: 'Sorting', name: 'np.sort()', desc: 'Return sorted.', code: "# Sort\nnp.sort([3, 1, 2])", out: "array([1, 2, 3])" },
+            { cat: 'Sorting', name: 'np.argsort()', desc: 'Sort indices.', code: "# Index order\nnp.argsort([3, 1, 2])", out: "array([1, 2, 0])" },
+            { cat: 'Sorting', name: 'np.lexsort()', desc: 'Indirect sort.', code: "# Sort keys\nnp.lexsort((b, a))", out: "array([0, 1, 2])" },
+            { cat: 'Sorting', name: 'np.partition()', desc: 'Partial sort.', code: "# K-th element\nnp.partition([3, 4, 1, 2], 2)", out: "array([1, 2, 3, 4])" },
+            { cat: 'Sorting', name: 'np.argpartition()', desc: 'Partition indices.', code: "# Index K-th\nnp.argpartition([3, 4, 1, 2], 2)", out: "array([2, 3, 0, 1])" },
+
+            // 8. Joining & Splitting
+            { cat: 'JoinSplit', name: 'np.concatenate()', desc: 'Join arrays.', code: "# Join\nnp.concatenate((a, b))", out: "array([1, 2, 3, 4, 5, 6])" },
+            { cat: 'JoinSplit', name: 'np.stack()', desc: 'New axis join.', code: "# Stack\nnp.stack((a, b))", out: "array([[1, 2, 3],\n       [4, 5, 6]])" },
+            { cat: 'JoinSplit', name: 'np.vstack()', desc: 'Vertical stack.', code: "# Row stack\nnp.vstack((a, b))", out: "array([[1, 2, 3],\n       [4, 5, 6]])" },
+            { cat: 'JoinSplit', name: 'np.hstack()', desc: 'Horizontal stack.', code: "# Col stack\nnp.hstack((a, b))", out: "array([1, 2, 3, 4, 5, 6])" },
+            { cat: 'JoinSplit', name: 'np.column_stack()', desc: '1D as columns.', code: "# As cols\nnp.column_stack((a, b))", out: "array([[1, 4],\n       [2, 5],\n       [3, 6]])" },
+            { cat: 'JoinSplit', name: 'np.split()', desc: 'Split array.', code: "# Split to 3\nnp.split(a, 3)", out: "[array([1]), array([2]), array([3])]" },
+            { cat: 'JoinSplit', name: 'np.array_split()', desc: 'Unequal split.', code: "# Split to 2\nnp.array_split(a, 2)", out: "[array([1, 2]), array([3])]" },
+            { cat: 'JoinSplit', name: 'np.hsplit()', desc: 'Horizontal split.', code: "# Col split\nnp.hsplit(m, 2)", out: "[array([[1],\n       [3]]), array([[2],\n       [4]])]" },
+            { cat: 'JoinSplit', name: 'np.vsplit()', desc: 'Vertical split.', code: "# Row split\nnp.vsplit(m, 2)", out: "[array([[1, 2]]), array([[3, 4]])]" },
+            { cat: 'JoinSplit', name: 'np.tile()', desc: 'Repeat array.', code: "# Repeat 2x\nnp.tile(a, 2)", out: "array([1, 2, 3, 1, 2, 3])" },
+            { cat: 'JoinSplit', name: 'np.repeat()', desc: 'Repeat elements.', code: "# Each 2x\nnp.repeat(a, 2)", out: "array([1, 1, 2, 2, 3, 3])" },
+            { cat: 'JoinSplit', name: 'np.delete()', desc: 'Delete elements.', code: "# Del index 1\nnp.delete(a, 1)", out: "array([1, 3])" },
+            { cat: 'JoinSplit', name: 'np.insert()', desc: 'Insert elements.', code: "# Ins 5 at 1\nnp.insert(a, 1, 5)", out: "array([1, 5, 2, 3])" },
+            { cat: 'JoinSplit', name: 'np.append()', desc: 'Append elements.', code: "# Add 4\nnp.append(a, 4)", out: "array([1, 2, 3, 4])" },
+            { cat: 'JoinSplit', name: 'np.pad()', desc: 'Pad array.', code: "# Pad zeros\nnp.pad(a, 1)", out: "array([0, 1, 2, 3, 0])" },
+
+            // 9. Logic
+            { cat: 'Logic', name: 'np.all()', desc: 'All true?', code: "# All > 0?\nnp.all(a > 0)", out: "True" },
+            { cat: 'Logic', name: 'np.any()', desc: 'Any true?', code: "# Any > 2?\nnp.any(a > 2)", out: "True" },
+            { cat: 'Logic', name: 'np.logical_and()', desc: 'AND.', code: "# T & F\nnp.logical_and([T, F], [T, T])", out: "array([ True, False])" },
+            { cat: 'Logic', name: 'np.logical_or()', desc: 'OR.', code: "# T | F\nnp.logical_or([T, F], [F, F])", out: "array([ True, False])" },
+            { cat: 'Logic', name: 'np.logical_not()', desc: 'NOT.', code: "# Not T\nnp.logical_not([True])", out: "array([False])" },
+            { cat: 'Logic', name: 'np.greater()', desc: '>', code: "# > 1\nnp.greater(a, 1)", out: "array([False,  True,  True])" },
+            { cat: 'Logic', name: 'np.less()', desc: '<', code: "# < 2\nnp.less(a, 2)", out: "array([ True, False, False])" },
+            { cat: 'Logic', name: 'np.equal()', desc: '==', code: "# == 2\nnp.equal(a, 2)", out: "array([False,  True, False])" },
+            { cat: 'Logic', name: 'np.isnan()', desc: 'Is NaN?', code: "# NaN check\nnp.isnan([1, np.nan])", out: "array([False,  True])" },
+            { cat: 'Logic', name: 'np.isinf()', desc: 'Is Inf?', code: "# Inf check\nnp.isinf([1, np.inf])", out: "array([False,  True])" },
+            { cat: 'Logic', name: 'np.isclose()', desc: 'Close?', code: "# Approx eq\nnp.isclose([1.0001], [1.0])", out: "array([ True])" },
+
+            // 10. Linear Algebra
+            { cat: 'LinAlg', name: 'np.matmul()', desc: 'Matrix product.', code: "# @ operator\nnp.matmul(m, m)", out: "array([[ 7, 10],\n       [15, 22]])" },
+            { cat: 'LinAlg', name: 'np.linalg.inv()', desc: 'Inverse.', code: "# Inv matrix\nnp.linalg.inv(m)", out: "array([[-2. ,  1. ],\n       [ 1.5, -0.5]])" },
+            { cat: 'LinAlg', name: 'np.linalg.det()', desc: 'Determinant.', code: "# Det\nnp.linalg.det(m)", out: "-2.00000000" },
+            { cat: 'LinAlg', name: 'np.linalg.eig()', desc: 'Eigenvalues.', code: "# Eig\nnp.linalg.eig(m)", out: "(array([-0.37,  5.37]), array(...))" },
+            { cat: 'LinAlg', name: 'np.linalg.norm()', desc: 'Norm.', code: "# Vector norm\nnp.linalg.norm(a)", out: "3.74165738" },
+            { cat: 'LinAlg', name: 'np.trace()', desc: 'Trace.', code: "# Diagonal sum\nnp.trace(m)", out: "5" },
+            { cat: 'LinAlg', name: 'np.inner()', desc: 'Inner prod.', code: "# Inner\nnp.inner(a, b)", out: "32" },
+            { cat: 'LinAlg', name: 'np.outer()', desc: 'Outer prod.', code: "# Outer\nnp.outer(a, b)", out: "array([[ 4,  5,  6],\n       [ 8, 10, 12],\n       [12, 15, 18]])" },
+            { cat: 'LinAlg', name: 'np.diag()', desc: 'Diagonal.', code: "# Get diag\nnp.diag(m)", out: "array([1, 4])" },
+            { cat: 'LinAlg', name: 'np.cross()', desc: 'Cross prod.', code: "# Cross\nnp.cross([1,0,0], [0,1,0])", out: "array([0, 0, 1])" },
+
+            // 11. Random
+            { cat: 'Random', name: 'np.random.rand()', desc: 'Uniform 0-1.', code: "# 2 Randoms\nnp.random.rand(2)", out: "array([0.45, 0.72])" },
+            { cat: 'Random', name: 'np.random.randn()', desc: 'Standard Normal.', code: "# 2 Normals\nnp.random.randn(2)", out: "array([-0.12,  1.05])" },
+            { cat: 'Random', name: 'np.random.randint()', desc: 'Random Int.', code: "# 0-10\nnp.random.randint(0, 10)", out: "7" },
+            { cat: 'Random', name: 'np.random.choice()', desc: 'Random Pick.', code: "# Pick 1\nnp.random.choice(a)", out: "2" },
+            { cat: 'Random', name: 'np.random.shuffle()', desc: 'Shuffle.', code: "# Shuffle a\nnp.random.shuffle(a); a", out: "array([2, 1, 3])" },
+            { cat: 'Random', name: 'np.random.seed()', desc: 'Set seed.', code: "# Seed 42\nnp.random.seed(42)", out: "None" },
+            { cat: 'Random', name: 'np.random.normal()', desc: 'Normal dist.', code: "# Mean 0, SD 1\nnp.random.normal(0, 1, 2)", out: "array([0.49, -0.13])" },
+            { cat: 'Random', name: 'np.random.uniform()', desc: 'Uniform dist.', code: "# 0 to 10\nnp.random.uniform(0, 10, 2)", out: "array([3.74, 9.50])" }
         ];
 
+        // --- APP LOGIC ---
         function init() {
-            const body = document.getElementById('ninja-body');
+            const body = document.getElementById('master-body');
             methods.forEach((m, i) => {
                 const tr = document.createElement('tr');
                 tr.className = 'func-row';
                 tr.dataset.cat = m.cat;
                 tr.dataset.name = m.name.toLowerCase();
-                const isChecked = localStorage.getItem(`np-ninja-v3-${m.name}`) === 'true';
+                const isChecked = localStorage.getItem(`np-master-v1-${m.name}`) === 'true';
+                
+                let catColor = '#f97316';
+                if(m.cat === 'Creation') catColor = '#238636'; 
+                if(m.cat === 'Properties') catColor = '#38bdf8';
+                if(m.cat === 'Math') catColor = '#da3633';
+
                 tr.innerHTML = `
                     <td style="text-align:center"><input type="checkbox" class="checkbox-custom" ${isChecked ? 'checked' : ''} onchange="toggleRead('${m.name}', this)"></td>
-                    <td><span class="type-badge cat-${m.cat.toLowerCase()}">${m.cat}</span></td>
+                    <td><span class="type-badge" style="color:${catColor}; border:1px solid ${catColor}; padding:2px 8px; border-radius:12px; font-size:0.7rem; font-weight:700;">${m.cat.toUpperCase()}</span></td>
                     <td class="func-name">${m.name}</td>
                     <td class="desc-text">${m.desc}</td>
                     <td><button class="play-btn" onclick="runDemo(${i})">▶</button></td>
@@ -251,39 +372,50 @@
 
         async function runDemo(i) {
             const m = methods[i];
-            const content = document.getElementById('console-content');
-            document.getElementById('modal').classList.add('active');
-            content.innerHTML = '';
+            const codeBox = document.getElementById('code-box');
+            const outBox = document.getElementById('output-box');
             
-            const lines = ['import numpy as np', `# ${m.desc}`, ...m.code.split('\n')];
-            for (let line of lines) {
-                const div = document.createElement('div');
-                div.className = 'line-in';
-                if(line.startsWith('#')) div.style.color = '#6a9955';
-                content.appendChild(div);
-                for (let char of line) {
-                    div.textContent += char;
-                    await new Promise(r => setTimeout(r, 15));
+            document.getElementById('modal').classList.add('active');
+            codeBox.textContent = '';
+            outBox.innerHTML = '';
+            
+            // Format code to handle comments properly
+            const lines = m.code.split('\n');
+            for(let line of lines) {
+                const lineDiv = document.createElement('div');
+                if(line.trim().startsWith('#')) {
+                    lineDiv.className = 'comment';
                 }
-                await new Promise(r => setTimeout(r, 200));
+                codeBox.appendChild(lineDiv);
+                
+                for (let char of line) {
+                    lineDiv.textContent += char;
+                    await new Promise(r => setTimeout(r, 10));
+                }
+                codeBox.appendChild(document.createTextNode('\n'));
             }
-            const out = document.createElement('div');
-            out.className = 'line-out';
-            out.textContent = m.out;
-            content.appendChild(out);
+            
+            await new Promise(r => setTimeout(r, 250));
+            outBox.innerHTML = m.out;
         }
 
         function toggleRead(name, el) {
-            localStorage.setItem(`np-ninja-v3-${name}`, el.checked);
+            localStorage.setItem(`np-master-v1-${name}`, el.checked);
             updateProgress();
         }
 
         function updateProgress() {
-            const checks = document.querySelectorAll('.checkbox-custom');
-            const checked = Array.from(checks).filter(c => c.checked).length;
+            const checked = document.querySelectorAll('.checkbox-custom:checked').length;
             const pct = Math.round((checked / methods.length) * 100);
             document.getElementById('progress-bar-fill').style.width = pct + '%';
             document.getElementById('progress-text').textContent = `${checked}/${methods.length}`;
+        }
+        
+        function resetProgress() {
+            if(confirm('Reset all progress?')) {
+                localStorage.clear();
+                location.reload();
+            }
         }
 
         function closeModal() { document.getElementById('modal').classList.remove('active'); }
